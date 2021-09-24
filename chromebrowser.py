@@ -81,26 +81,24 @@ class ChromeBrowse(Chrome):
         submit_exam_button = exams_modal.find_element_by_id('submitExam')
         Select(select_motivation).select_by_visible_text(self.motivation)
         # Send date and submit
-        try:
-            self.click(payment_day)
-            # Pick an available date
-            calendar    = self.submitWiat.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top')))
-            days_active = calendar.find_elements_by_css_selector('td.day.active')
-            if self.date_mod == 1:
-                self.click(random.choice(days_active))
-            else:
-                self.click(days_active[self.date_mod])
-            self.submitWiat.until(EC.invisibility_of_element_located(calendar))
-            periods = self.find_element_by_id('periods')
-            options = periods.find_elements_by_tag_name('option')
-            if self.period_mod == 1:
-                period_value = random.choice(options).get_attribute('value')
-            else:
-                period_value = options[self.period_mod].get_attribute('value')
-            Select(periods).select_by_value(period_value)
-            # Submit
-            self.click(submit_exam_button)
-        except: pass
+        self.click(payment_day)
+        # Pick an available date
+        calendar    = self.submitWiat.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top')))
+        days_active = calendar.find_elements_by_css_selector('td.day.active')
+        if self.date_mod == 1:
+            self.click(random.choice(days_active))
+        else:
+            self.click(days_active[self.date_mod])
+        self.submitWiat.until(EC.invisibility_of_element_located(calendar))
+        periods = self.find_element_by_id('periods')
+        options = periods.find_elements_by_tag_name('option')
+        if self.period_mod == 1:
+            period_value = random.choice(options).get_attribute('value')
+        else:
+            period_value = options[self.period_mod].get_attribute('value')
+        Select(periods).select_by_value(period_value)
+        # Submit
+        self.click(submit_exam_button)
         return True
 
     # Search for available appointment
@@ -116,11 +114,14 @@ class ChromeBrowse(Chrome):
                     continue
                 a = td[i].find_element_by_tag_name('a')
                 tcf_type = td[i].find_element_by_class_name('fc-title')
-                if self.submit(a, tcf_type):
-                    self.td_count.append((r, m, i))
-                    # Switch to a new tab if submit fails and search for another
-                    self.execute_script("window.open()")
-                    self.switch_to.window(self.window_handles[-1])
+                try:
+                    if self.submit(a, tcf_type):
+                        self.td_count.append((r, m, i))
+                        # Switch to a new tab if submit fails and search for another
+                        self.execute_script("window.open()")
+                        self.switch_to.window(self.window_handles[-1])
+                except:
+                    continue
             fc_mor = self.find_elements_by_class_name('fc-more')
             for i in range(len(fc_mor)):
                 self.click(fc_mor[i])
