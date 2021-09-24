@@ -60,44 +60,45 @@ class ChromeBrowse(Chrome):
         if a.get_attribute('class') == 'fc-day-grid-event fc-h-event fc-event fc-start fc-end bg-secondary':
             return False
         # Check if correct exam
-        if tcf.text in self.tcf_exams:
-            # Open date appointment modal
-            self.clear()
-            a.click()
-            exams_modal       = self.submitWiat.until(EC.visibility_of_element_located((By.ID, 'exams-modal')))
-            payment_day       = exams_modal.find_element_by_id('paymentDay')
-            close_exam_button = exams_modal.find_element_by_css_selector('button.btn.btn-default.waves-effect')
-            # Check if payment day is disabled
-            if payment_day.get_property('disabled'):
-                self.execute_script("arguments[0].click();", close_exam_button)
-                self.submitWiat.until(EC.invisibility_of_element_located(exams_modal))
-                return False
-            self.playsound.play()
-            select_motivation  = exams_modal.find_element_by_id('motivation')
-            submit_exam_button = exams_modal.find_element_by_id('submitExam')
-            # Send date and submit
-            try:
-                Select(select_motivation).select_by_visible_text(self.motivation)
-                payment_day.click()
-                # Pick an available date (Not tested yet)
-                calendar    = self.submitWiat.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top')))
-                days_active = calendar.find_elements_by_css_selector('td.day.active')
-                if self.date_mod == 1:
-                    random.choice(days_active).click()
-                else:
-                    days_active[self.date_mod].click()
-                self.submitWiat.until(EC.invisibility_of_element_located(calendar))
-                periods = self.find_element_by_id('periods')
-                options = periods.find_elements_by_tag_name('option')
-                if self.period_mod == 1:
-                    period_value = random.choice(options).get_attribute('value')
-                else:
-                    period_value = options[self.period_mod].get_attribute('value')
-                Select(periods).select_by_value(period_value)
-                # Submit
-                self.execute_script("arguments[0].click();", submit_exam_button)
-            except: pass
-            return True
+        if tcf.text not in self.tcf_exams:
+            return False
+        # Open date appointment modal
+        self.clear()
+        a.click()
+        exams_modal       = self.submitWiat.until(EC.visibility_of_element_located((By.ID, 'exams-modal')))
+        payment_day       = exams_modal.find_element_by_id('paymentDay')
+        close_exam_button = exams_modal.find_element_by_css_selector('button.btn.btn-default.waves-effect')
+        # Check if payment day is disabled
+        if payment_day.get_property('disabled'):
+            self.execute_script("arguments[0].click();", close_exam_button)
+            self.submitWiat.until(EC.invisibility_of_element_located(exams_modal))
+            return False
+        self.playsound.play()
+        select_motivation  = exams_modal.find_element_by_id('motivation')
+        submit_exam_button = exams_modal.find_element_by_id('submitExam')
+        # Send date and submit
+        try:
+            Select(select_motivation).select_by_visible_text(self.motivation)
+            payment_day.click()
+            # Pick an available date (Not tested yet)
+            calendar    = self.submitWiat.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top')))
+            days_active = calendar.find_elements_by_css_selector('td.day.active')
+            if self.date_mod == 1:
+                random.choice(days_active).click()
+            else:
+                days_active[self.date_mod].click()
+            self.submitWiat.until(EC.invisibility_of_element_located(calendar))
+            periods = self.find_element_by_id('periods')
+            options = periods.find_elements_by_tag_name('option')
+            if self.period_mod == 1:
+                period_value = random.choice(options).get_attribute('value')
+            else:
+                period_value = options[self.period_mod].get_attribute('value')
+            Select(periods).select_by_value(period_value)
+            # Submit
+            self.execute_script("arguments[0].click();", submit_exam_button)
+        except: pass
+        return True
 
     def clear(self):
         try:
