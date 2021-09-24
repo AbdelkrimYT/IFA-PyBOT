@@ -75,8 +75,8 @@ class ChromeBrowse(Chrome):
             self.playsound.play()
             select_motivation = exams_modal.find_element_by_id('motivation')
             submit_exam_button = exams_modal.find_element_by_id('submitExam')
+            # Send date and submit
             try:
-                # Send date and submit
                 Select(select_motivation).select_by_visible_text(self.motivation)
                 payment_day.click()
                 # Pick an available date (Not tested yet)
@@ -94,6 +94,7 @@ class ChromeBrowse(Chrome):
                 else:
                     period_value = options[self.period_mod].get_attribute('value')
                 Select(periods).select_by_value(period_value)
+                # Submit
                 self.execute_script("arguments[0].click();", submit_exam_button)
             except: pass
             return True
