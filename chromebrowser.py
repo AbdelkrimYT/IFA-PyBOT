@@ -76,7 +76,7 @@ class ChromeBrowse(Chrome):
                 return False
             select_motivation = exams_modal.find_element_by_id('motivation')
             submit_exam_button = exams_modal.find_element_by_id('submitExam')
-            #self.playsound.play()
+            self.playsound.play()
             try:
                 # Send date and submit
                 Select(select_motivation).select_by_visible_text(self.motivation)
