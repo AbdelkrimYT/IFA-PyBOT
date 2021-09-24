@@ -4,8 +4,9 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import WebDriverException, NoSuchWindowException
+from selenium.common.exceptions import WebDriverException, NoSuchWindowException, TimeoutException
 from vlc import MediaPlayer
+from time import sleep
 import json
 import random
 
@@ -39,6 +40,9 @@ class ChromeBrowse(Chrome):
         self.loginWait  = WebDriverWait(self, 15)
         self.searchWait = WebDriverWait(self, 1)
         self.submitWiat = WebDriverWait(self, 5)
+
+    def click(self, obj):
+        self.execute_script('arguments[0].click();', obj)
     
     def login(self):
         while True:
@@ -63,30 +67,29 @@ class ChromeBrowse(Chrome):
         if tcf.text not in self.tcf_exams:
             return False
         # Open date appointment modal
-        self.clear()
-        a.click()
+        self.click(a)
         exams_modal       = self.submitWiat.until(EC.visibility_of_element_located((By.ID, 'exams-modal')))
         payment_day       = exams_modal.find_element_by_id('paymentDay')
         close_exam_button = exams_modal.find_element_by_css_selector('button.btn.btn-default.waves-effect')
         # Check if payment day is disabled
         if payment_day.get_property('disabled'):
-            self.execute_script("arguments[0].click();", close_exam_button)
+            self.click(close_exam_button)
             self.submitWiat.until(EC.invisibility_of_element_located(exams_modal))
             return False
         self.playsound.play()
         select_motivation  = exams_modal.find_element_by_id('motivation')
         submit_exam_button = exams_modal.find_element_by_id('submitExam')
+        Select(select_motivation).select_by_visible_text(self.motivation)
         # Send date and submit
         try:
-            Select(select_motivation).select_by_visible_text(self.motivation)
-            payment_day.click()
-            # Pick an available date (Not tested yet)
+            self.click(payment_day)
+            # Pick an available date
             calendar    = self.submitWiat.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top')))
             days_active = calendar.find_elements_by_css_selector('td.day.active')
             if self.date_mod == 1:
-                random.choice(days_active).click()
+                self.click(random.choice(days_active))
             else:
-                days_active[self.date_mod].click()
+                self.click(days_active[self.date_mod])
             self.submitWiat.until(EC.invisibility_of_element_located(calendar))
             periods = self.find_element_by_id('periods')
             options = periods.find_elements_by_tag_name('option')
@@ -96,17 +99,10 @@ class ChromeBrowse(Chrome):
                 period_value = options[self.period_mod].get_attribute('value')
             Select(periods).select_by_value(period_value)
             # Submit
-            self.execute_script("arguments[0].click();", submit_exam_button)
+            self.click(submit_exam_button)
         except: pass
         return True
 
-    def clear(self):
-        try:
-            errors_close = self.find_elements_by_class_name('close-jq-toast-single')
-            for e in errors_close:
-                self.execute_script("arguments[0].click();", e)
-        except: pass
-    
     # Search for available appointment
     def search(self, r):
         select_region     = self.searchWait.until(EC.visibility_of_element_located((By.ID, 'antenna_filter')))
@@ -127,8 +123,7 @@ class ChromeBrowse(Chrome):
                     self.switch_to.window(self.window_handles[-1])
             fc_mor = self.find_elements_by_class_name('fc-more')
             for i in range(len(fc_mor)):
-                self.clear()
-                fc_mor[i].click()
+                self.click(fc_mor[i])
                 plus_model    = self.searchWait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.fc-popover.fc-more-popover')))
                 mbox          = plus_model.find_element_by_class_name('fc-event-container')
                 p_model_close = plus_model.find_element_by_css_selector('span.fc-close.fc-icon.fc-icon-x')
@@ -142,12 +137,10 @@ class ChromeBrowse(Chrome):
                         # Switch to a new tab if submit fails and search for another
                         self.execute_script("window.open()")
                         self.switch_to.window(self.window_handles[-1])
-                self.clear()
-                p_model_close.click()
+                self.click(p_model_close)
                 self.searchWait.until(EC.invisibility_of_element(plus_model))
             # Switch to next content
-            self.execute_script("arguments[0].click();", next_month_button)
-            self.find_element_by_tag_name('body').send_keys(Keys.CONTROL + Keys.HOME)
+            self.click(next_month_button)
     
     def run(self):
         while True:
