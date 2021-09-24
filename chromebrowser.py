@@ -57,7 +57,7 @@ class ChromeBrowse(Chrome):
                 self.loginWait.until(EC.url_changes(self.current_url))
                 self.get(self.exams_url)
                 break
-            except: pass
+            except: continue
     
     def submit(self, a, tcf):
         # Get active FC and correct
@@ -120,8 +120,7 @@ class ChromeBrowse(Chrome):
                         # Switch to a new tab if submit fails and search for another
                         self.execute_script("window.open()")
                         self.switch_to.window(self.window_handles[-1])
-                except:
-                    continue
+                except: continue
             fc_mor = self.find_elements_by_class_name('fc-more')
             for i in range(len(fc_mor)):
                 self.click(fc_mor[i])
@@ -133,11 +132,13 @@ class ChromeBrowse(Chrome):
                     if (r, m, i, a) in self.fc_mor_count:
                         continue
                     tcf_type = ambox[a].find_element_by_class_name('fc-title')
-                    if self.submit(ambox[a], tcf_type):
-                        self.fc_mor_count.append((r, m, i, a))
-                        # Switch to a new tab if submit fails and search for another
-                        self.execute_script("window.open()")
-                        self.switch_to.window(self.window_handles[-1])
+                    try:
+                        if self.submit(ambox[a], tcf_type):
+                            self.fc_mor_count.append((r, m, i, a))
+                            # Switch to a new tab if submit fails and search for another
+                            self.execute_script("window.open()")
+                            self.switch_to.window(self.window_handles[-1])
+                    except: continue
                 self.click(p_model_close)
                 self.searchWait.until(EC.invisibility_of_element(plus_model))
             # Switch to next content
