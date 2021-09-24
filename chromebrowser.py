@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException, NoSuchWindowException, TimeoutException
 from vlc import MediaPlayer
+from time import sleep
 import json
 import random
 
@@ -74,6 +75,7 @@ class ChromeBrowse(Chrome):
         if payment_day.get_property('disabled'):
             self.click(close_exam_button)
             self.submitWiat.until(EC.invisibility_of_element_located(exams_modal))
+            sleep(1)
             return False
         self.playsound.play()
         select_motivation  = exams_modal.find_element_by_id('motivation')
