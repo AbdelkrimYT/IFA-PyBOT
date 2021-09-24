@@ -69,14 +69,14 @@ class ChromeBrowse(Chrome):
             exams_modal = self.submitWiat.until(EC.visibility_of_element_located((By.ID, 'exams-modal')))
             payment_day = exams_modal.find_element_by_id('paymentDay')
             close_exam_button = exams_modal.find_element_by_css_selector('button.btn.btn-default.waves-effect')
-            select_motivation = exams_modal.find_element_by_id('motivation')
-            Select(select_motivation).select_by_visible_text(self.motivation)
             # Check if payment day is disabled
             if payment_day.get_property('disabled'):
                 self.execute_script("arguments[0].click();", close_exam_button)
                 self.submitWiat.until(EC.invisibility_of_element_located(exams_modal))
                 return False
-            self.playsound.play()
+            select_motivation = exams_modal.find_element_by_id('motivation')
+            submit_exam_button = exams_modal.find_element_by_id('submitExam')
+            #self.playsound.play()
             try:
                 # Send date and submit
                 Select(select_motivation).select_by_visible_text(self.motivation)
@@ -85,9 +85,9 @@ class ChromeBrowse(Chrome):
                 calendar = self.submitWiat.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top')))
                 days_active = calendar.find_elements_by_css_selector('td.day.active')
                 if self.date_mod == 1:
-                    self.execute_script("arguments[0].click();", random.choice(days_active))
+                    random.choice(days_active).click()
                 else:
-                    self.execute_script("arguments[0].click();", days_active[self.date_mod])
+                    days_active[self.date_mod].click()
                 self.submitWiat.until(EC.invisibility_of_element_located(calendar))
                 periods = self.find_element_by_id('periods')
                 options = periods.find_elements_by_tag_name('option')
