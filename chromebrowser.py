@@ -6,8 +6,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import WebDriverException, NoSuchWindowException
 from vlc import MediaPlayer
-from threading import Thread
-from time import sleep
 import json
 import random
 
