@@ -44,9 +44,9 @@ class ChromeBrowse(Chrome):
         while True:
             try:
                 self.get(self.login_url)
-                email = self.loginWait.until(EC.visibility_of_element_located((By.NAME, 'email')))
+                email    = self.loginWait.until(EC.visibility_of_element_located((By.NAME, 'email')))
                 password = self.loginWait.until(EC.visibility_of_element_located((By.NAME, 'password')))
-                submit = self.loginWait.until(EC.element_to_be_clickable((By.ID, 'login')))
+                submit   = self.loginWait.until(EC.element_to_be_clickable((By.ID, 'login')))
                 email.send_keys(self.username)
                 password.send_keys(self.password)
                 submit.click()
@@ -64,8 +64,8 @@ class ChromeBrowse(Chrome):
             # Open date appointment modal
             self.clear()
             a.click()
-            exams_modal = self.submitWiat.until(EC.visibility_of_element_located((By.ID, 'exams-modal')))
-            payment_day = exams_modal.find_element_by_id('paymentDay')
+            exams_modal       = self.submitWiat.until(EC.visibility_of_element_located((By.ID, 'exams-modal')))
+            payment_day       = exams_modal.find_element_by_id('paymentDay')
             close_exam_button = exams_modal.find_element_by_css_selector('button.btn.btn-default.waves-effect')
             # Check if payment day is disabled
             if payment_day.get_property('disabled'):
@@ -73,14 +73,14 @@ class ChromeBrowse(Chrome):
                 self.submitWiat.until(EC.invisibility_of_element_located(exams_modal))
                 return False
             self.playsound.play()
-            select_motivation = exams_modal.find_element_by_id('motivation')
+            select_motivation  = exams_modal.find_element_by_id('motivation')
             submit_exam_button = exams_modal.find_element_by_id('submitExam')
             # Send date and submit
             try:
                 Select(select_motivation).select_by_visible_text(self.motivation)
                 payment_day.click()
                 # Pick an available date (Not tested yet)
-                calendar = self.submitWiat.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top')))
+                calendar    = self.submitWiat.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.datepicker.datepicker-dropdown.dropdown-menu.datepicker-orient-left.datepicker-orient-top')))
                 days_active = calendar.find_elements_by_css_selector('td.day.active')
                 if self.date_mod == 1:
                     random.choice(days_active).click()
@@ -108,7 +108,7 @@ class ChromeBrowse(Chrome):
     
     # Search for available appointment
     def search(self, r):
-        select_region = self.searchWait.until(EC.visibility_of_element_located((By.ID, 'antenna_filter')))
+        select_region     = self.searchWait.until(EC.visibility_of_element_located((By.ID, 'antenna_filter')))
         next_month_button = self.find_element_by_css_selector('button.fc-next-button.fc-button.fc-state-default.fc-corner-right')
         Select(select_region).select_by_value(r)
         # Loop for months
@@ -128,10 +128,10 @@ class ChromeBrowse(Chrome):
             for i in range(len(fc_mor)):
                 self.clear()
                 fc_mor[i].click()
-                plus_model = self.searchWait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.fc-popover.fc-more-popover')))
-                mbox = plus_model.find_element_by_class_name('fc-event-container')
+                plus_model    = self.searchWait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, 'div.fc-popover.fc-more-popover')))
+                mbox          = plus_model.find_element_by_class_name('fc-event-container')
                 p_model_close = plus_model.find_element_by_css_selector('span.fc-close.fc-icon.fc-icon-x')
-                ambox = mbox.find_elements_by_tag_name('a')
+                ambox         = mbox.find_elements_by_tag_name('a')
                 for a in range(len(ambox)):
                     if (r, m, i, a) in self.fc_mor_count:
                         continue
