@@ -19,8 +19,10 @@ MODEL = {
 
 class REGIONS:
     ALGER = '1'
-    ANNABA = '2'
+    ORAN = '2'
+    ANNABA = '3'
     CONSTANTINE = '4'
+    TLEMCEN = '5'
 
 
 class TCF_EXAMS:
@@ -57,17 +59,25 @@ class Window(Tk):
         
         self.regionsFrame = LabelFrame(text='Sélectionnez les régions')
         self.alger = BooleanVar()
+        self.oran = BooleanVar()
         self.annaba = BooleanVar()
         self.constantine = BooleanVar()
+        self.tlemcen = BooleanVar()
         self.alger.set(REGIONS.ALGER in self.config['regions'])
+        self.oran.set(REGIONS.ORAN in self.config['regions'])
         self.annaba.set(REGIONS.ANNABA in self.config['regions'])
         self.constantine.set(REGIONS.CONSTANTINE in self.config['regions'])
-        self.region_alger = Checkbutton(self.regionsFrame, text='Alger', variable=self.alger,)
-        self.region_annaba = Checkbutton(self.regionsFrame, text='Annaba', variable=self.annaba,)
-        self.region_constantine = Checkbutton(self.regionsFrame, text='Constantine', variable=self.constantine,)
+        self.tlemcen.set(REGIONS.TLEMCEN in self.config['regions'])
+        self.region_alger = Checkbutton(self.regionsFrame, text='Alger', variable=self.alger)
+        self.region_oran = Checkbutton(self.regionsFrame, text='Oran', variable=self.oran)
+        self.region_annaba = Checkbutton(self.regionsFrame, text='Annaba', variable=self.annaba)
+        self.region_constantine = Checkbutton(self.regionsFrame, text='Constantine', variable=self.constantine)
+        self.region_tlemcen = Checkbutton(self.regionsFrame, text='Tlemcen', variable=self.tlemcen)
         self.region_alger.pack(fill='both', expand='yes', padx=2)
+        self.region_oran.pack(fill='both', expand='yes', padx=2)
         self.region_annaba.pack(fill='both', expand='yes', padx=2)
         self.region_constantine.pack(fill='both', expand='yes', padx=2)
+        self.region_tlemcen.pack(fill='both', expand='yes', padx=2)
         self.regionsFrame.pack(fill='both', expand='yes', padx=2)
         
         self.tcfExamsFrame = LabelFrame(text='Sélectionnez TCF Exams')
@@ -137,7 +147,12 @@ class Window(Tk):
         self.config['email'] = self.email.get()
 
         # REGIONS
-        for v, s in [(REGIONS.ALGER, self.alger.get()), (REGIONS.ANNABA, self.annaba.get()), (REGIONS.CONSTANTINE, self.constantine.get())]:
+        for v, s in [
+            (REGIONS.ALGER, self.alger.get()),
+            (REGIONS.ORAN, self.oran.get()),
+            (REGIONS.ANNABA, self.annaba.get()),
+            (REGIONS.CONSTANTINE, self.constantine.get()),
+            (REGIONS.TLEMCEN, self.tlemcen.get())]:
             if s:
                 if v not in self.config['regions']:
                     self.config['regions'].append(v)
