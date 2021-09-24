@@ -97,9 +97,8 @@ class ChromeBrowse(Chrome):
                     period_value = options[self.period_mod].get_attribute('value')
                 Select(periods).select_by_value(period_value)
                 self.execute_script("arguments[0].click();", submit_exam_button)
-                return True
-            except:
-                return False
+            except: pass
+            return True
 
     def clear(self):
         try:
@@ -159,7 +158,7 @@ class ChromeBrowse(Chrome):
                     if self.current_url == self.login_url: self.login()
                     self.search(r)
                 except Exception as e:
-                    print(e)
+                    pass
                     '''
                     if e.__class__  in (WebDriverException, NoSuchWindowException):
                         self.stop_client()
