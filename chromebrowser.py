@@ -36,7 +36,7 @@ class ChromeBrowse(Chrome):
         self.date_mod   = config["date"]
         self.period_mod = config["period"]
 
-        self.loginWait  = WebDriverWait(self, 10)
+        self.loginWait  = WebDriverWait(self, 15)
         self.searchWait = WebDriverWait(self, 1)
         self.submitWiat = WebDriverWait(self, 5)
     
