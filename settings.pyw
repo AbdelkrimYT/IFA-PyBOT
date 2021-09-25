@@ -32,6 +32,7 @@ class TCF_EXAMS:
 
 
 class Window(Tk):
+    
     def __init__(self):
         super().__init__()
         self.title('IFA Paramètres')
@@ -154,7 +155,6 @@ class Window(Tk):
     
     def save(self):
         self.config['email'] = self.email.get()
-        
         # REGIONS
         for v, s in [
             (REGIONS.ALGER, self.alger.get()),
@@ -168,7 +168,6 @@ class Window(Tk):
             else:
                 if v in self.config['regions']:
                     self.config['regions'].remove(v)
-        
         # TCF_EXAMS
         for v, s in [
             (TCF_EXAMS.TCF_SO, self.tcf_so.get()),
