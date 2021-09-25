@@ -4,7 +4,7 @@ from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.common.exceptions import WebDriverException, NoSuchWindowException, TimeoutException
+from selenium.common.exceptions import TimeoutException
 from vlc import MediaPlayer
 from time import sleep
 import json
@@ -16,7 +16,7 @@ class ChromeBrowse(Chrome):
     def __init__(self):
         super().__init__(executable_path='.//bin//chromedriver.exe')
         self.maximize_window()
-        #self.implicitly_wait(50)
+        self.implicitly_wait(0)
 
         self.login_url    = 'https://portail.if-algerie.com/login'
         self.exams_url    = 'https://portail.if-algerie.com/exams'
@@ -104,7 +104,7 @@ class ChromeBrowse(Chrome):
 
     # Search for available appointment
     def search(self, r):
-        select_region     = self.searchWait.until(EC.visibility_of_element_located((By.ID, 'antenna_filter')))
+        select_region     = self.find_element_by_id('antenna_filter')
         next_month_button = self.find_element_by_css_selector('button.fc-next-button.fc-button.fc-state-default.fc-corner-right')
         Select(select_region).select_by_value(r)
         # Loop for months
@@ -119,7 +119,7 @@ class ChromeBrowse(Chrome):
                     if self.submit(a, tcf_type):
                         self.td_count.append((r, m, i))
                         # Switch to a new tab if submit fails and search for another
-                        self.execute_script("window.open()")
+                        self.execute_script("window.open();")
                         self.switch_to.window(self.window_handles[-1])
                 except: continue
             fc_mor = self.find_elements_by_class_name('fc-more')
@@ -137,7 +137,7 @@ class ChromeBrowse(Chrome):
                         if self.submit(ambox[a], tcf_type):
                             self.fc_mor_count.append((r, m, i, a))
                             # Switch to a new tab if submit fails and search for another
-                            self.execute_script("window.open()")
+                            self.execute_script("window.open();")
                             self.switch_to.window(self.window_handles[-1])
                     except: continue
                 self.click(p_model_close)
@@ -149,18 +149,10 @@ class ChromeBrowse(Chrome):
         while True:
             for r in self.regions:
                 try:
-                    self.refresh()
-                    if self.current_url != self.exams_url: self.get(self.exams_url)
+                    self.get(self.exams_url)
                     if self.current_url == self.login_url: self.login()
                     self.search(r)
-                except Exception as e:
-                    pass
-                    '''
-                    if e.__class__  in (WebDriverException, NoSuchWindowException):
-                        self.stop_client()
-                        self.quit()
-                        break
-                    '''
+                except: continue
 
 
 if __name__ == "__main__":

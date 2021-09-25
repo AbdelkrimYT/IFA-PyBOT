@@ -11,8 +11,9 @@ def main():
 if __name__ == '__main__':
     with open('settings.json', 'r') as f:
          cpu = json.load(f)['cpu']
-    process = [Process(target=main) for i in range(cpu)]
-    for p in process:
-        p.start()
-    for p in process:
-        p.join()
+    while True:
+        process = [Process(target=main) for i in range(cpu)]
+        for p in process:
+            p.start()
+        for p in process:
+            p.join()
