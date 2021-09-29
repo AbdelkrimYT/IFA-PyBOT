@@ -99,7 +99,7 @@ class ChromeBrowse(Chrome):
             period_value = options[self.period_mod].get_attribute('value')
         Select(periods).select_by_value(period_value)
         # Submit
-        self.click(submit_exam_button)
+        self.execute_async_script('arguments[0].click();', submit_exam_button)
         return True
 
     # Search for available appointment
