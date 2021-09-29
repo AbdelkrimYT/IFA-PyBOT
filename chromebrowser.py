@@ -16,7 +16,7 @@ class ChromeBrowse(Chrome):
     def __init__(self):
         super().__init__(executable_path='.//bin//chromedriver.exe')
         self.maximize_window()
-        self.implicitly_wait(0)
+        self.implicitly_wait(1)
 
         self.login_url    = 'https://portail.if-algerie.com/login'
         self.exams_url    = 'https://portail.if-algerie.com/exams'
